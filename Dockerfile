@@ -40,8 +40,10 @@ COPY --from=frontend-builder /app/frontend/.next /app/frontend/.next
 COPY --from=frontend-builder /app/frontend/package*.json /app/frontend/
 COPY --from=frontend-builder /app/frontend/node_modules /app/frontend/node_modules
 
-# Copiar a pasta public somente se existir para evitar erro
-RUN if [ -d /app/frontend/public ]; then cp -r /app/frontend/public /app/frontend/public; fi
+# Copiar script e executar cópia condicional da pasta public
+COPY copy_public_if_exists.sh /app/copy_public_if_exists.sh
+RUN chmod +x /app/copy_public_if_exists.sh
+RUN /app/copy_public_if_exists.sh
 
 # Configurar supervisor
 RUN mkdir -p /var/log/supervisor
