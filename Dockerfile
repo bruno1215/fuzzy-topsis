@@ -36,10 +36,12 @@ COPY --from=backend-builder /app/backend /app/backend
 ENV PATH="/opt/venv/bin:$PATH"
 
 # Copiar frontend build e node_modules
-COPY --from=frontend-builder /app/frontend/public /app/frontend/public
 COPY --from=frontend-builder /app/frontend/.next /app/frontend/.next
 COPY --from=frontend-builder /app/frontend/package*.json /app/frontend/
 COPY --from=frontend-builder /app/frontend/node_modules /app/frontend/node_modules
+
+# Copiar a pasta public somente se existir para evitar erro
+RUN if [ -d /app/frontend/public ]; then cp -r /app/frontend/public /app/frontend/public; fi
 
 # Configurar supervisor
 RUN mkdir -p /var/log/supervisor
